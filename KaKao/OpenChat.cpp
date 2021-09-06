@@ -55,57 +55,47 @@ record
 result
 ["Prodo님이 들어왔습니다.", "Ryan님이 들어왔습니다.", "Prodo님이 나갔습니다.", "Prodo님이 들어왔습니다."]
 */
-#include <iostream>
-#include <cstdlib>
+#include <string>
 #include <vector>
 #include <map>
+#include <cstdio>
 
 using namespace std;
 
 vector<string> solution(vector<string> record) {
     vector<string> answer;
-    map <string, string> users;
-    users.insert(pair<string, string>("uid1234", "Prodo"));
-    users.insert(pair<string, string>("uid4567", "Ryan"));
-
-    for (int i = 0; i < int(record.size()); i++) {
-        string id;
-        int cnt = 0;
-        if (record[i][0] == 'E') {
-            cnt = 6;
-            while (true) {
-                if (record[i][cnt] == ' ') {
-                    break;
-                }
-                id += record[i][cnt];
-                cnt++;
-            }
-            answer.push_back(users[id] + "님이 들어왔습니다.");
+    map<string, string> m1;
+    char cmd[10];
+    char id[11];
+    char name[11];
+    for(int i=0; i<record.size(); i++){
+        if (record[i][0] == 'E'){
+            sscanf(record[i].c_str(), "%s %s %s", cmd, id, name);
+            m1[id] = name;
         }
-        else if (record[i][0] == 'L') {
-            cnt = 6;
-            for(int j = cnt; j < int(record[i].size()); j++){
-                id += record[i][j];
-            }
-            answer.push_back(users[id] + "님이 나갔습니다.");
+        else if (record[i][0] == 'C'){
+            sscanf(record[i].c_str(), "%s %s %s", cmd, id, name);
+            m1[id] = name;
         }
-        else {
-            cnt = 7;
-            string name;
-            while (true) {
-                if (record[i][cnt] == ' ') {
-                    break;
-                }
-                id += record[i][cnt];
-                cnt++;
-            }
-     
-            for (int j = cnt + 1; j < int(record[i].size()); j++) {
-                name += record[i][j];
-            }
-            users[id] = name;
+        else if (record[i][0] == 'L'){
+            sscanf(record[i].c_str(), "%s %s", cmd, id);
         }
+        
     }
+    
+    for(int i=0; i<record.size(); i++){
+        if (record[i][0] == 'E'){
+            sscanf(record[i].c_str(), "%s %s %s", cmd, id, name);
+            answer.push_back(m1[id]+"님이 들어왔습니다.");
+        }
+        
+        else if (record[i][0] == 'L'){
+            sscanf(record[i].c_str(), "%s %s", cmd, id);
+            answer.push_back(m1[id]+"님이 나갔습니다.");
+        }
+        
+    }
+   
     return answer;
 }
 
