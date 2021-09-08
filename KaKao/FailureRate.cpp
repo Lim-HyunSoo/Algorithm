@@ -19,46 +19,52 @@ N	 |          stages	        |   result
 4	 |       [4,4,4,4,4]        | 	[4,1,2,3]
 */
 
+#include <string>
 #include <vector>
-
+#include <algorithm>
 using namespace std;
-
-vector<int> solution(int N, vector<int> stages) {
-	vector<int> answer;
-
-	vector <int> num(N+1);
-	vector <double> cal(N);
-
-	for (int i : stages) {
-		num[i - 1]++;
-	}
-
-	double sum = num[N];
-	for (int i = N-1; i > -1; i--) {
-		//cout << i << endl; //1 3 2 1 0 1 
-		sum += num[i];
-		cal[i] = num[i] / sum;
-	}
-
-	double maxN;
-	int maxIndex;
-	
-	for(int i = 0; i < N; i++){
-		maxN = cal[0];
-		maxIndex = 0;
-		
-		for (int j = 0; j < N; j++) {
-			if (cal[j] > maxN) {
-				maxN = cal[j];
-				maxIndex = j;
-			}
-		}
-		cal[maxIndex] = -1;
-		answer.push_back(maxIndex+1);
-
-	}
-	
-	return answer;
+ 
+bool Cmp(pair<double, int> A, pair<double, int> B)
+{
+    if (A.first >= B.first)
+    {
+        if (A.first == B.first)
+        {
+            if (A.second < B.second)
+            {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+ 
+vector<int> solution(int N, vector<int> stages) 
+{
+    vector<int> answer;
+    vector<pair<double, int>> Fail;
+    for (int i = 1; i <= N; i++)
+    {
+        int Cur_Stage = i;
+        int Clear_Num = 0;
+        int Progress_Num = 0;
+        for (int j = 0; j < stages.size(); j++)
+        {
+            if (stages[j] >= Cur_Stage) Clear_Num++;
+            if (stages[j] == Cur_Stage) Progress_Num++;
+        }
+        if (Clear_Num == 0) Fail.push_back(make_pair(0, Cur_Stage));
+        else
+        {
+            double FailPercent = (double)Progress_Num / (double)Clear_Num;
+            Fail.push_back(make_pair(FailPercent, Cur_Stage));
+        }
+    }
+    sort(Fail.begin(), Fail.end(), Cmp);
+    for (int i = 0; i < Fail.size(); i++) answer.push_back(Fail[i].second);
+    return answer;
 }
 int main() {
     vector <int> testData = { 2, 1, 2, 6, 2, 4, 3, 3 };
